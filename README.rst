@@ -5,10 +5,11 @@ This module provides a decorator to allow to write spider callbacks
 which performs multiple requests without the need to write multiple
 callbacks for each request.
 
-The code still experimental and might not work in all cases.
+The code still *experimental* and might not work in all cases.
 
 Example::
 
+  @inline_requests
   def parse_item(self, response):
     item = self.build_item(response)
 
