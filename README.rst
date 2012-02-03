@@ -27,6 +27,14 @@ Example::
       response = yield Request(response.url + '?pictures')
       item['pictures'] = self.extract_pictures(response)
 
+      # a request that might fail (dns error, network timeout, error 404/500, etc)
+      try:
+        response = yield Request(response.url + '?protected')
+      except Exception as e:
+        log.err(e, spider=self)
+      else:
+        item['protected'] = self.extract_protected_info(response)
+
       # finally yield the item
       yield item
 
