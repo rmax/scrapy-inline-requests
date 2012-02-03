@@ -5,6 +5,8 @@ This module provides a decorator to allow to write spider callbacks
 which performs multiple requests without the need to write multiple
 callbacks for each request.
 
+The code still experimental and might not work in all cases.
+
 Example::
 
   def parse_item(self, response):
