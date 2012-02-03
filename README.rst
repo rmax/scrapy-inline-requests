@@ -1,28 +1,34 @@
 Scrapy Inline Requests
 ======================
 
-This module provides a decorator to allow to write spider callbacks
-which performs multiple requests without the need to write multiple
-callbacks for each request.
+This module provides a decorator to allow to write Scrapy_'s spider
+callbacks which performs multiple requests without the need to write
+multiple callbacks for each request.
 
 The code still *experimental* and might not work in all cases.
 
 Example::
 
-  @inline_requests
-  def parse_item(self, response):
-    item = self.build_item(response)
+  from inline_requests import inline_requests
 
-    # scrape more information
-    response = yield Request(response.url + '?info')
-    item['info'] = self.extract_info(response)
+  class MySpider(CrawlSpider):
 
-    # scrape pictures
-    response = yield Request(response.url + '?pictures')
-    item['pictures'] = self.extract_pictures(response)
+    ...
 
-    # finally yield the item
-    yield item
+    @inline_requests
+    def parse_item(self, response):
+      item = self.build_item(response)
+
+      # scrape more information
+      response = yield Request(response.url + '?info')
+      item['info'] = self.extract_info(response)
+
+      # scrape pictures
+      response = yield Request(response.url + '?pictures')
+      item['pictures'] = self.extract_pictures(response)
+
+      # finally yield the item
+      yield item
 
 
 Example Project
@@ -38,3 +44,5 @@ Requirements
 
 * Python 2.6+
 * Scrapy 0.14+
+
+.. _Scrapy: http://www.scrapy.org
