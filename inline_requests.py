@@ -1,26 +1,37 @@
+import inspect
 import types
-from functools import partial
+from functools import partial, wraps
 
 from scrapy.http import Request
 from scrapy.utils.spider import iterate_spider_output
 
 
-def inline_requests(method):
-    """Decorator to enable inline requests"""
-    def wrapper(self, response):
-        callback = types.MethodType(method, self, self.__class__)
-        genwrapper = _RequestGenerator(callback)
-        return genwrapper(response)
-    return wrapper
+def inline_requests(method_or_func):
+    args = inspect.getargspec(method_or_func).args
+    if not args:
+        raise TypeError("Function must accept at least one argument.")
+    # XXX: hardcoded convention of 'self' as first argument for methods
+    if args[0] == 'self':
+        def wrapper(self, response, **kwargs):
+            callback = types.MethodType(method_or_func, self, self.__class__)
+            genwrapper = _RequestGenerator(callback, **kwargs)
+            return genwrapper(response)
+    else:
+        def wrapper(response, **kwargs):
+            genwrapper = _RequestGenerator(method_or_func, **kwargs)
+            return genwrapper(response)
+
+    return wraps(method_or_func)(wrapper)
 
 
 class _RequestGenerator(object):
 
-    def __init__(self, callback):
+    def __init__(self, callback, **kwargs):
         self.callback = callback
+        self.kwargs = kwargs
 
     def __call__(self, response):
-        output = iterate_spider_output(self.callback(response))
+        output = iterate_spider_output(self.callback(response=response, **self.kwargs))
         if isinstance(output, types.GeneratorType):
             return self._unwindGenerator(output)
         else:
@@ -59,4 +70,3 @@ class _RequestGenerator(object):
         except StopIteration:
             return
         return self._unwindGenerator(generator, ret)
-
