@@ -5,9 +5,12 @@ This module provides a decorator to allow to write Scrapy_'s spider
 callbacks which performs multiple requests without the need to write
 multiple callbacks for each request.
 
-The code still *experimental* and might not work in all cases.
+The code is *experimental*, might not work in all cases and even might be
+hard to debug.
 
-Example::
+Example:
+
+.. code:: python
 
   from inline_requests import inline_requests
 
