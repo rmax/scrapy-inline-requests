@@ -1,10 +1,12 @@
+import os
 from setuptools import setup
 
-LONG_DESC = open('README.rst').read()
+LONG_DESC = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
+
 
 setup(
     name='scrapy-inline-requests',
-    version='0.1.1',
+    version='0.1.2',
     description='Scrapy decorator for inline requests',
     long_description=LONG_DESC,
     author='Rolando Espinoza La fuente',
