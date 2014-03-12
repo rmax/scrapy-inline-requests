@@ -47,14 +47,14 @@ class _RequestGenerator(object):
                 except StopIteration:
                     break
             if isinstance(ret, Request):
-                yield self._wrapRequest(ret, ret.callback, ret.errback, generator)
+                yield self._wrapRequest(ret, generator)
                 break
             else:
                 yield ret
 
-    def _wrapRequest(self, request, req_callback, req_errback, generator):
-        request.callback = partial(self._handleSuccess, callback=req_callback, generator=generator)
-        request.errback = partial(self._handleFailure, errback=req_errback, generator=generator)
+    def _wrapRequest(self, request, generator):
+        request.callback = partial(self._handleSuccess, callback=request.callback, generator=generator)
+        request.errback = partial(self._handleFailure, errback=request.errback, generator=generator)
         return request
 
     def _handleSuccess(self, response, callback, generator):
