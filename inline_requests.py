@@ -71,11 +71,9 @@ class _RequestGenerator(object):
         try:
             if errback:
                 try:
-                    ret = errback(failure)
+                    ret = generator.send(errback(failure))
                 except:
                     ret = failure.throwExceptionIntoGenerator(generator)
-                else:
-                    ret = generator.send(ret)
             else:
                 ret = failure.throwExceptionIntoGenerator(generator)
         except StopIteration:
