@@ -1,0 +1,3 @@
+responses = yield [req1, req2, req3]
+responses == [resp1, resp2, resp3]
+responses == [resp1, None, resp3]  # ignored (404, 503, whatever)
