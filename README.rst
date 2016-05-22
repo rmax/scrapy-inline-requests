@@ -1,11 +1,9 @@
 Scrapy Inline Requests
 ======================
 
-This module provides a decorator to allow to write Scrapy_'s spider
-callbacks which performs multiple requests without the need to write
-multiple callbacks for each request.
+This module provides a decorator that allows to write coroutine-like spider callbacks.
 
-The code is *experimental*, might not work in all cases and even might be
+The code is **experimental**, might not work in all cases and even might be
 hard to debug.
 
 Example:
@@ -56,4 +54,12 @@ Requirements
 * Python 2.6+
 * Scrapy 0.14+
 
+Known Issues
+------------
+
+* Middlewares can drop or ignore non-200 status responses causing the callback to not continue its execution. This can be overcome by using the flag ``handle_httpstatus_all``. See the `httperror`_ middleware documentation.
+* High concurrency and large responses can cause higher memory usage.
+
+
 .. _Scrapy: http://www.scrapy.org
+.. _httperror: http://doc.scrapy.org/en/latest/topics/spider-middleware.html#module-scrapy.spidermiddlewares.httperror
