@@ -13,7 +13,8 @@ def inline_requests(method_or_func):
     # XXX: hardcoded convention of 'self' as first argument for methods
     if args[0] == 'self':
         def wrapper(self, response, **kwargs):
-            callback = types.MethodType(method_or_func, self, self.__class__)
+            #callback = types.MethodType(method_or_func, self, self.__class__)
+            callback = types.MethodType(method_or_func, self)
             genwrapper = _RequestGenerator(callback, **kwargs)
             return genwrapper(response)
     else:
@@ -43,7 +44,7 @@ class _RequestGenerator(object):
                 ret, _prev = _prev, None
             else:
                 try:
-                    ret = generator.next()
+                    ret = next(generator)
                 except StopIteration:
                     break
             if isinstance(ret, Request) and ret.callback is None:
