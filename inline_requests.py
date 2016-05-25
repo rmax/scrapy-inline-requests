@@ -7,8 +7,20 @@ from scrapy.http import Request
 from scrapy.utils.spider import iterate_spider_output
 
 
+def _get_args(method_or_func):
+    """
+    Return method or function arguments.
+    """
+    try:
+        # Python 3.0+
+        args = list(inspect.signature(method_or_func).parameters.keys())
+    except AttributeError:
+        # Python 2.7
+        args = inspect.getargspec(method_or_func).args
+    return args
+
 def inline_requests(method_or_func):
-    args = inspect.getargspec(method_or_func).args
+    args = _get_args(method_or_func)
     if not args:
         raise TypeError("Function must accept at least one argument.")
     # XXX: hardcoded convention of 'self' as first argument for methods
