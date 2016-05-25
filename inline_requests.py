@@ -1,19 +1,33 @@
 import inspect
 import types
 from functools import partial, wraps
+from six import create_bound_method
 
 from scrapy.http import Request
 from scrapy.utils.spider import iterate_spider_output
 
 
+def _get_args(method_or_func):
+    """
+    Return method or function arguments.
+    """
+    try:
+        # Python 3.0+
+        args = list(inspect.signature(method_or_func).parameters.keys())
+    except AttributeError:
+        # Python 2.7
+        args = inspect.getargspec(method_or_func).args
+    return args
+
 def inline_requests(method_or_func):
-    args = inspect.getargspec(method_or_func).args
+    args = _get_args(method_or_func)
     if not args:
         raise TypeError("Function must accept at least one argument.")
     # XXX: hardcoded convention of 'self' as first argument for methods
     if args[0] == 'self':
         def wrapper(self, response, **kwargs):
-            callback = types.MethodType(method_or_func, self, self.__class__)
+            callback = create_bound_method(method_or_func, self)
+            
             genwrapper = _RequestGenerator(callback, **kwargs)
             return genwrapper(response)
     else:
@@ -43,7 +57,7 @@ class _RequestGenerator(object):
                 ret, _prev = _prev, None
             else:
                 try:
-                    ret = generator.next()
+                    ret = next(generator)
                 except StopIteration:
                     break
             if isinstance(ret, Request) and ret.callback is None:
