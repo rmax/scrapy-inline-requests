@@ -60,27 +60,36 @@ class _RequestGenerator(object):
                     ret = next(generator)
                 except StopIteration:
                     break
-            if isinstance(ret, Request) and ret.callback is None:
+            if isinstance(ret, Request):
                 yield self._wrapRequest(ret, generator)
                 break
             else:
                 yield ret
 
     def _wrapRequest(self, request, generator):
-        request.callback = partial(self._handleSuccess, generator=generator)
-        request.errback = partial(self._handleFailure, generator=generator)
+        request.callback = partial(self._handleSuccess, callback=request.callback, generator=generator)
+        request.errback = partial(self._handleFailure, errback=request.errback, generator=generator)
         return request
 
-    def _handleSuccess(self, response, generator):
+    def _handleSuccess(self, response, callback, generator):
         try:
-            ret = generator.send(response)
+            if callback:
+                ret = generator.send(callback(response))
+            else:
+                ret = generator.send(response)
         except StopIteration:
             return
         return self._unwindGenerator(generator, ret)
 
-    def _handleFailure(self, failure, generator):
+    def _handleFailure(self, failure, errback, generator):
         try:
-            ret = failure.throwExceptionIntoGenerator(generator)
+            if errback:
+                try:
+                    ret = generator.send(errback(failure))
+                except:
+                    ret = failure.throwExceptionIntoGenerator(generator)
+            else:
+                ret = failure.throwExceptionIntoGenerator(generator)
         except StopIteration:
             return
         return self._unwindGenerator(generator, ret)
