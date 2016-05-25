@@ -1,6 +1,7 @@
 import inspect
 import types
 from functools import partial, wraps
+from six import create_bound_method
 
 from scrapy.http import Request
 from scrapy.utils.spider import iterate_spider_output
@@ -13,8 +14,8 @@ def inline_requests(method_or_func):
     # XXX: hardcoded convention of 'self' as first argument for methods
     if args[0] == 'self':
         def wrapper(self, response, **kwargs):
-            #callback = types.MethodType(method_or_func, self, self.__class__)
-            callback = types.MethodType(method_or_func, self)
+            callback = create_bound_method(method_or_func, self)
+            
             genwrapper = _RequestGenerator(callback, **kwargs)
             return genwrapper(response)
     else:
