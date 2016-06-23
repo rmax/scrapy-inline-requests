@@ -1,9 +1,9 @@
-from urlparse import urljoin
+from six.moves.urllib_parse import urljoin
 
 from scrapy.contrib.loader import XPathItemLoader
 from scrapy.contrib.loader.processor import TakeFirst
 from scrapy.contrib.spiders import CrawlSpider, Rule
-from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.linkextractors import LinkExtractor
 from scrapy.http import Request
 from scrapy.item import Item, Field
 from scrapy.selector import HtmlXPathSelector
@@ -34,9 +34,9 @@ class StackoverflowSpider(CrawlSpider):
     )
 
     rules = (
-        Rule(SgmlLinkExtractor(allow=r'/users/\d+/'), callback='parse_profile'),
+        Rule(LinkExtractor(allow=r'/users/\d+/'), callback='parse_profile'),
         # follow only first pages in pagination links
-        Rule(SgmlLinkExtractor(allow=r'\?page=\d&')),
+        Rule(LinkExtractor(allow=r'\?page=\d&')),
     )
 
     @inline_requests
