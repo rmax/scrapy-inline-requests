@@ -51,8 +51,8 @@ The `example` directory includes a example spider for StackOverflow.com::
 Requirements
 ------------
 
-* Python 2.6+
-* Scrapy 0.14+
+* Python 2.7+, 3.4+
+* Scrapy 1.0+
 
 Known Issues
 ------------
