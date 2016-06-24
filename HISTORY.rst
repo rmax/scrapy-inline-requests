@@ -2,7 +2,7 @@
 History
 =======
 
-0.3.0 (next release)
+0.3.0dev
 --------------------
 
 * Example spider cleanup and simplification.
