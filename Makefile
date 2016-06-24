@@ -102,8 +102,8 @@ docs:
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ src/inline_requests
 	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+	$(MAKE) -C docs singlehtml
+	$(BROWSER) docs/_build/singlehtml/index.html
 
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
