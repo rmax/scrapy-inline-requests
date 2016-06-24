@@ -2,8 +2,8 @@
 History
 =======
 
-0.3.0dev
---------------------
+0.3.0 (2016-06-24)
+------------------
 
 * **Backward incompatible change**: Added more restrictions to the request
   object (no callback/errback).
