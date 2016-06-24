@@ -1,26 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-test_inline_requests
-----------------------------------
-
-Tests for `inline_requests` module.
-"""
-from scrapy.http import Request, Response
-
 from inline_requests import inline_requests
-
-
-def _consume(callback, *args):
-    req = next(callback(*args))
-    while req:
-        yield req
-        try:
-            resp = Response(req.url, request=req)
-            req = next(req.callback(resp))
-        except (TypeError, StopIteration):
-            break
+from scrapy.http import Request, Response
 
 
 def test_inline_requests():
@@ -49,3 +28,14 @@ def test_inline_request_callback_not_allowed():
 
     spider = MySpider()
     _consume(spider.parse(Response('http://example.com')))
+
+
+def _consume(callback, *args):
+    req = next(callback(*args))
+    while req:
+        yield req
+        try:
+            resp = Response(req.url, request=req)
+            req = next(req.callback(resp))
+        except (TypeError, StopIteration):
+            break

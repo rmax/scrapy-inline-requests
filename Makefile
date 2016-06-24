@@ -1,5 +1,5 @@
-.PHONY: clean-so clean-test clean-pyc clean-build docs clean
-.PHONY: check check-manifest check-setup lint
+.PHONY: clean-so clean-test clean-pyc clean-build clean-docs clean
+.PHONY: docs check check-manifest check-setup lint
 .PHONY: test test-all coverage
 .PHONY: compile-reqs install-reqs
 .PHONY: release dist install build-inplace
@@ -15,12 +15,15 @@ endef
 export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+SPHINX_BUILD := html
+
 help:
 	@echo "check - check setup, code style, setup, etc"
 	@echo "check-manifest - check manifest"
 	@echo "check-setup - check setup"
 	@echo "clean - remove all build, test, coverage and Python artifacts"
 	@echo "clean-build - remove build artifacts"
+	@echo "clean-docs - remove docs artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
 	@echo "clean-so - remove compiled extensions"
@@ -44,7 +47,7 @@ check-setup:
 check-manifest:
 	check-manifest --ignore ".*"
 
-clean: clean-build clean-pyc clean-test clean-so
+clean: clean-build clean-docs clean-pyc clean-test clean-so
 
 clean-build:
 	rm -fr build/
@@ -52,6 +55,9 @@ clean-build:
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+
+clean-docs:
+	$(MAKE) -C docs clean
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -102,8 +108,8 @@ docs:
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ src/inline_requests
 	$(MAKE) -C docs clean
-	$(MAKE) -C docs singlehtml
-	$(BROWSER) docs/_build/singlehtml/index.html
+	$(MAKE) -C docs $(SPHINX_BUILD)
+	$(BROWSER) docs/_build/$(SPHINX_BUILD)/index.html
 
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
