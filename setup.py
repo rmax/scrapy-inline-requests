@@ -23,7 +23,7 @@ requirements = [
 
 setup(
     name='scrapy-inline-requests',
-    version='0.3.0dev',
+    version='0.3.0',
     description="A decorator for writing coroutine-like spider callbacks.",
     long_description=read_file('README.rst') + '\n\n' + read_file('HISTORY.rst'),
     author="Rolando Espinoza",
