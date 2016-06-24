@@ -20,8 +20,8 @@ Requires ``Scrapy>=1.0`` and supports Python 2.7+ and 3.4+.
 * Free software: MIT license
 * Documentation: https://scrapy-inline-requests.readthedocs.org.
 
-Example
--------
+Usage
+-----
 
 The spider below shows a simple use case of scraping a page and following a few links:
 
@@ -55,5 +55,6 @@ Known Issues
 * High concurrency and large responses can cause higher memory usage.
 * This decorator assumes your method have the following signature
   ``(self, response)``.
+* The decorated method must return a **generator** instance.
 
 .. _`httperror middleware`: http://doc.scrapy.org/en/latest/topics/spider-middleware.html#scrapy.spidermiddlewares.httperror.HttpErrorMiddleware
