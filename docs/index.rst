@@ -9,18 +9,9 @@ Welcome to Scrapy Inline Requests's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
    readme
    installation
-   contributing
-   authors
+   reference
    history
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

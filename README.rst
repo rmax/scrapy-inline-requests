@@ -21,7 +21,7 @@ Requires ``Scrapy>=1.0`` and supports Python 2.7+ and 3.4+.
 * Documentation: https://scrapy-inline-requests.readthedocs.org.
 
 Usage
------
+=====
 
 The spider below shows a simple use case of scraping a page and following a few links:
 
@@ -47,7 +47,7 @@ See the ``examples/`` directory for a more complex spider.
 
 
 Known Issues
-------------
+============
 
 * Middlewares can drop or ignore non-200 status responses causing the callback
   to not continue its execution. This can be overcome by using the flag
