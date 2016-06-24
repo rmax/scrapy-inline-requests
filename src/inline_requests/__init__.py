@@ -8,7 +8,7 @@ from .utils import get_args
 
 __author__ = 'Rolando Espinoza'
 __email__ = 'rolando at rmax.io'
-__version__ = '0.3.0'
+__version__ = '0.3.1dev'
 
 __all__ = ['inline_requests']
 
