@@ -51,7 +51,9 @@ Known Issues
 
 * Middlewares can drop or ignore non-200 status responses causing the callback
   to not continue its execution. This can be overcome by using the flag
-  ``handle_httpstatus_all``. See the httperror middleware documentation.
+  ``handle_httpstatus_all``. See the `httperror middleware`_ documentation.
 * High concurrency and large responses can cause higher memory usage.
 * This decorator assumes your method have the following signature
   ``(self, response)``.
+
+.. _`httperror middleware`: http://doc.scrapy.org/en/latest/topics/spider-middleware.html#scrapy.spidermiddlewares.httperror.HttpErrorMiddleware
