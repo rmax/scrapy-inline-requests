@@ -110,7 +110,13 @@ class _RequestGenerator(object):
         request.errback = partial(self._handleFailure, generator=generator)
         return request
 
+    def _cleanRequest(self, request):
+        request.callback = None
+        request.errback = None
+
     def _handleSuccess(self, response, generator):
+        if response.request:
+            self._cleanRequest(response.request)
         try:
             ret = generator.send(response)
         except StopIteration:
@@ -118,6 +124,12 @@ class _RequestGenerator(object):
         return self._unwindGenerator(generator, ret)
 
     def _handleFailure(self, failure, generator):
+        # Look for the request instance in the exception value.
+        if hasattr(failure.value, 'request'):
+            self._cleanRequest(failure.value.request)
+        elif hasattr(failure.value, 'response'):
+            if hasattr(failure.value.response, 'request'):
+                self._cleanRequest(failure.value.response.request)
         try:
             ret = failure.throwExceptionIntoGenerator(generator)
         except StopIteration:

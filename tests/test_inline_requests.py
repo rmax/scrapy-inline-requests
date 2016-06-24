@@ -17,7 +17,8 @@ def _consume(callback, *args):
     while req:
         yield req
         try:
-            req = next(req.callback(Response(req.url)))
+            resp = Response(req.url, request=req)
+            req = next(req.callback(resp))
         except (TypeError, StopIteration):
             break
 
@@ -36,3 +37,15 @@ def test_inline_requests():
         'http://example/1',
         'http://example/2',
     ]
+
+
+def test_inline_request_callback_not_allowed():
+    class MySpider(object):
+        @inline_requests
+        def parse(self, response):
+            resp = yield Request('http://example/1')
+            assert resp.request.callback is None
+            assert resp.request.errback is None
+
+    spider = MySpider()
+    _consume(spider.parse(Response('http://example.com')))
