@@ -99,13 +99,21 @@ class _RequestGenerator(object):
                     ret = next(generator)
                 except StopIteration:
                     break
-            if isinstance(ret, Request) and ret.callback is None:
+            if isinstance(ret, Request):
                 yield self._wrapRequest(ret, generator)
                 break
             else:
                 yield ret
 
     def _wrapRequest(self, request, generator):
+        # Allowing existing callback or errbacks could lead to undesired
+        # results. To ensure the generator is **always** properly exhausted we
+        # must handle both callback and errback in order to send back the
+        # result to the generator.
+        if request.callback is not None:
+            raise ValueError("Request with existing callback is not supported")
+        if request.errback is not None:
+            raise ValueError("Request with existing callback is not supported")
         request.callback = partial(self._handleSuccess, generator=generator)
         request.errback = partial(self._handleFailure, generator=generator)
         return request
