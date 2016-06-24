@@ -85,10 +85,9 @@ class _RequestGenerator(object):
 
     def __call__(self, response):
         output = iterate_spider_output(self.callback(response=response, **self.kwargs))
-        if isinstance(output, types.GeneratorType):
-            return self._unwindGenerator(output)
-        else:
-            return output
+        if not isinstance(output, types.GeneratorType):
+            raise ValueError("Callback must return a generator type")
+        return self._unwindGenerator(output)
 
     def _unwindGenerator(self, generator, _prev=None):
         while True:
