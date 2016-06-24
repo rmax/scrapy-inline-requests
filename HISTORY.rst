@@ -5,7 +5,11 @@ History
 0.3.0dev
 --------------------
 
-* Example spider cleanup and simplification.
+* **Backward incompatible change**: Added more restrictions to the request
+  object (no callback/errback).
+* Cleanup callback/errback attributes before sending back the request to the
+  generator.
+* Simplified example spider.
 
 0.2.0 (2016-06-23)
 ------------------
