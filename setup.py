@@ -1,31 +1,50 @@
-import os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from pkgutil import walk_packages
 from setuptools import setup
 
-LONG_DESC = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
+def find_packages(path):
+    # This method returns packages and subpackages as well.
+    for _, name, is_pkg in walk_packages([path]):
+        if is_pkg:
+            yield name
+
+
+def read_file(filename):
+    with open(filename) as fp:
+        return fp.read()
+
+
+requirements = [
+    'six>=1.5',
+    'scrapy>=1.0',
+]
 
 setup(
     name='scrapy-inline-requests',
     version='0.2.0',
-    description='Scrapy decorator for inline requests',
-    long_description=LONG_DESC,
-    author='Rolando Espinoza La fuente',
-    author_email='darkrho@gmail.com',
+    description="A decorator for writing coroutine-like spider callbacks.",
+    long_description=read_file('README.rst') + '\n\n' + read_file('HISTORY.rst'),
+    author="Rolando Espinoza",
+    author_email='rolando at rmax.io',
     url='https://github.com/rolando/scrapy-inline-requests',
-    license='BSD',
-    py_modules=['inline_requests'],
-    install_requires=[
-        'six>=1.5.2',
-        'Scrapy>=1.0',
-    ],
+    packages=list(find_packages('src')),
+    package_dir={'': 'src'},
+    include_package_data=True,
+    install_requires=requirements,
+    license="MIT",
+    zip_safe=True,
+    keywords='scrapy-inline-requests',
     classifiers=[
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
+        'Development Status :: 2 - Pre-Alpha',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
     ],
 )

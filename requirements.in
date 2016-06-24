@@ -1,0 +1,6 @@
+#
+# This file specifics development requirements. To update the requirements.txt
+# file run:
+#
+#    pip-compile requirements.in -o requirements.txt
+#

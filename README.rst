@@ -1,65 +1,57 @@
+===============================
 Scrapy Inline Requests
-======================
+===============================
 
-This module provides a decorator that allows to write coroutine-like spider callbacks.
+.. image:: https://img.shields.io/pypi/v/scrapy-inline-requests.svg
+        :target: https://pypi.python.org/pypi/scrapy-inline-requests
 
-The code is **experimental**, might not work in all cases and even might be
-hard to debug.
+.. image:: https://img.shields.io/travis/rolando/scrapy-inline-requests.svg
+        :target: https://travis-ci.org/rolando/scrapy-inline-requests
 
-Example:
+.. image:: https://readthedocs.org/projects/scrapy-inline-requests/badge/?version=latest
+        :target: https://readthedocs.org/projects/scrapy-inline-requests/?badge=latest
+        :alt: Documentation Status
+
+
+A decorator for writing coroutine-like spider callbacks.
+
+Requires ``Scrapy>=1.0`` and supports Python 2.7+ and 3.4+.
+
+* Free software: MIT license
+* Documentation: https://scrapy-inline-requests.readthedocs.org.
+
+Example
+-------
+
+The spider below shows a simple use case of scraping a page and following a few links:
 
 .. code:: python
 
-  from inline_requests import inline_requests
+    from scrapy import Spider, Request
+    from inline_requests import inline_requests
 
-  class MySpider(CrawlSpider):
+    class MySpider(Spider):
+        name = 'myspider'
+        start_urls = ['http://httpbin.org/html']
 
-    ...
-
-    @inline_requests
-    def parse_item(self, response):
-      item = self.build_item(response)
-
-      # scrape more information
-      response = yield Request(response.url + '?info')
-      item['info'] = self.extract_info(response)
-
-      # scrape pictures
-      response = yield Request(response.url + '?pictures')
-      item['pictures'] = self.extract_pictures(response)
-
-      # a request that might fail (dns error, network timeout, error 404/500, etc)
-      try:
-        response = yield Request(response.url + '?protected')
-      except Exception as e:
-        log.err(e, spider=self)
-      else:
-        item['protected'] = self.extract_protected_info(response)
-
-      # finally yield the item
-      yield item
+        @inline_requests
+        def parse(self, response):
+            urls = [response.url]
+            for i in range(10):
+                next_resp = yield Request(response.urljoin('?page=%d' % i))
+                urls.append(next_resp.url)
+            yield {'urls': urls}
 
 
-Example Project
----------------
+See the ``examples/`` directory for a more complex spider.
 
-The `example` directory includes a example spider for StackOverflow.com::
-
-  cd example
-  scrapy crawl stackoverflow
-
-Requirements
-------------
-
-* Python 2.7+, 3.4+
-* Scrapy 1.0+
 
 Known Issues
 ------------
 
-* Middlewares can drop or ignore non-200 status responses causing the callback to not continue its execution. This can be overcome by using the flag ``handle_httpstatus_all``. See the `httperror`_ middleware documentation.
+* Middlewares can drop or ignore non-200 status responses causing the callback
+  to not continue its execution. This can be overcome by using the flag
+  ``handle_httpstatus_all``. See the httperror middleware documentation.
 * High concurrency and large responses can cause higher memory usage.
-
-
-.. _Scrapy: http://www.scrapy.org
-.. _httperror: http://doc.scrapy.org/en/latest/topics/spider-middleware.html#module-scrapy.spidermiddlewares.httperror
+* This decorator assumes your method have the following signature
+  ``(self, response)``.

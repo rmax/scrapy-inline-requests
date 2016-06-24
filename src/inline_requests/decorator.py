@@ -1,5 +1,6 @@
 import inspect
 import types
+
 from functools import partial, wraps
 from six import create_bound_method
 
@@ -19,6 +20,7 @@ def _get_args(method_or_func):
         args = inspect.getargspec(method_or_func).args
     return args
 
+
 def inline_requests(method_or_func):
     args = _get_args(method_or_func)
     if not args:
@@ -27,7 +29,7 @@ def inline_requests(method_or_func):
     if args[0] == 'self':
         def wrapper(self, response, **kwargs):
             callback = create_bound_method(method_or_func, self)
-            
+
             genwrapper = _RequestGenerator(callback, **kwargs)
             return genwrapper(response)
     else:
