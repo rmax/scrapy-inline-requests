@@ -26,14 +26,14 @@ class StackoverflowSpider(CrawlSpider):
         answers_url = response.urljoin('?tab=answers')
         answers_resp = yield Request(answers_url)
         user['answers'] = list(
-            self.iter_links(answers_resp.css('.answer-link'))
+            self.iter_links(answers_resp, answers_resp.css('.answer-link'))
         )
 
         # Scrape user's questions.
         questions_url = response.urljoin('?tab=questions')
         questions_resp = yield Request(questions_url)
         user['questions'] = list(
-            self.iter_links(questions_resp.css('.user-questions h3'))
+            self.iter_links(questions_resp, questions_resp.css('.user-questions h3'))
         )
 
         # Scrape user's tags.
@@ -52,9 +52,9 @@ class StackoverflowSpider(CrawlSpider):
             'url': response.url,
         }
 
-    def iter_links(self, sel, expr='a[href]'):
+    def iter_links(self, response, sel, expr='a[href]'):
         for link in sel.css(expr):
             yield {
                 'title': link.css('::text').extract_first(),
-                'url': link.xpath('@href').extract_first(),
+                'url': response.urljoin(link.xpath('@href').extract_first()),
             }
