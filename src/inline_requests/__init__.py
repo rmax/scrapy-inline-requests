@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import warnings
+
 from functools import wraps
+from scrapy.exceptions import ScrapyDeprecationWarning
 from six import create_bound_method
 
 from .generator import RequestGenerator
@@ -61,6 +64,9 @@ def inline_requests(method_or_func):
             genwrapper = RequestGenerator(callback, **kwargs)
             return genwrapper(response)
     else:
+        warnings.warn("Decorating a non-method function will be deprecated",
+                      ScrapyDeprecationWarning, stacklevel=1)
+
         def wrapper(response, **kwargs):
             genwrapper = RequestGenerator(method_or_func, **kwargs)
             return genwrapper(response)
