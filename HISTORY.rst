@@ -10,10 +10,10 @@ History
 0.3.0 (2016-06-24)
 ------------------
 
-* **Backward incompatible change**: Added more restrictions to the request
-  object (no callback/errback).
 * Cleanup callback/errback attributes before sending back the request to the
-  generator.
+  generator. This fixes an edge case when using ``request.repalce()``.
+* Warn if the callback returns requests with callback or errback set.
+* Added deprecation about decorating non-spider functions.
 * Simplified example spider.
 
 0.2.0 (2016-06-23)

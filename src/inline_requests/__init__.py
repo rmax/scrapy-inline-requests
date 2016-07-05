@@ -42,7 +42,7 @@ def inline_requests(method_or_func):
     * The decorated method must be a spider method.
     * The decorated method must use the ``yield`` keyword or return a generator.
     * The decorated method must accept ``response`` as the first argument.
-    * The decorated method must yield ``Request`` objects without neither
+    * The decorated method should yield ``Request`` objects without neither
       ``callback`` nor ``errback`` set.
 
     If your requests don't come back to the generator try setting the flag to
