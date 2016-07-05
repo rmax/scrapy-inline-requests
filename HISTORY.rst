@@ -4,8 +4,9 @@ History
 
 .. comment:: bumpversion marker
 
-0.3.1-dev (unreleased)
-----------------------
+0.3.1 (2016-07-04)
+------------------
+
 * Added deprecation about decorating non-spider functions.
 * Warn if the callback returns requests with callback or errback set. This
   reverts the compability with requests with callbacks.
