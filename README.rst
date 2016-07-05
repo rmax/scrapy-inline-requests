@@ -20,15 +20,15 @@ Requires ``Scrapy>=1.0`` and supports Python 2.7+ and 3.4+.
 * Free software: MIT license
 * Documentation: https://scrapy-inline-requests.readthedocs.org.
 
-Usage
------
+Quickstart
+----------
 
 The spider below shows a simple use case of scraping a page and following a few links:
 
 .. code:: python
 
-    from scrapy import Spider, Request
     from inline_requests import inline_requests
+    from scrapy import Spider, Request
 
     class MySpider(Spider):
         name = 'myspider'
@@ -38,12 +38,23 @@ The spider below shows a simple use case of scraping a page and following a few 
         def parse(self, response):
             urls = [response.url]
             for i in range(10):
-                next_resp = yield Request(response.urljoin('?page=%d' % i))
-                urls.append(next_resp.url)
+                next_url = response.urljoin('?page=%d' % i)
+                try:
+                    next_resp = yield Request(next_url)
+                    urls.append(next_resp.url)
+                except Exception:
+                    self.logger.info("Failed request %s", i, exc_info=True)
+
             yield {'urls': urls}
 
 
 See the ``examples/`` directory for a more complex spider.
+
+.. warning::
+
+  The generator resumes its execution when a request's response is processed,
+  this means the generator won't be resume after yielding an item or a request
+  with it's own callback.
 
 
 Known Issues
@@ -55,6 +66,8 @@ Known Issues
 * High concurrency and large responses can cause higher memory usage.
 * This decorator assumes your method have the following signature
   ``(self, response)``.
-* The decorated method must return a **generator** instance.
+* Wrapped requests may not be able to be serialized by persistent backends.
+* Unless you know what you are doing, the decorated method must be a spider
+  method and return a **generator** instance.
 
 .. _`httperror middleware`: http://doc.scrapy.org/en/latest/topics/spider-middleware.html#scrapy.spidermiddlewares.httperror.HttpErrorMiddleware
