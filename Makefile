@@ -1,5 +1,5 @@
 .PHONY: clean-so clean-test clean-pyc clean-build clean-docs clean
-.PHONY: docs check check-manifest check-setup lint
+.PHONY: docs check check-manifest check-setup check-history lint
 .PHONY: test test-all coverage
 .PHONY: compile-reqs install-reqs
 .PHONY: release dist install build-inplace
@@ -21,6 +21,7 @@ help:
 	@echo "check - check setup, code style, setup, etc"
 	@echo "check-manifest - check manifest"
 	@echo "check-setup - check setup"
+	@echo "check-history - check history"
 	@echo "clean - remove all build, test, coverage and Python artifacts"
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-docs - remove docs artifacts"
@@ -39,13 +40,19 @@ help:
 	@echo "develop - install package in develop mode"
 	@echo "install - install the package to the active Python's site-packages"
 
-check: check-setup check-manifest lint
+check: check-setup check-manifest check-history lint
 
 check-setup:
+	@echo "Checking package metadata (name, description, etc)"
 	python setup.py check --strict --metadata --restructuredtext
 
 check-manifest:
+	@echo "Checking MANIFEST.in"
 	check-manifest --ignore ".*"
+
+check-history:
+	@echo "Checking latest version in HISTORY"
+	VERSION=`cat VERSION`; grep "^$${VERSION}\b" HISTORY.rst
 
 clean: clean-build clean-docs clean-pyc clean-test clean-so
 
@@ -80,41 +87,39 @@ build-inplace:
 	python setup.py build_ext --inplace
 
 develop: clean
-	python setup.py develop -v
+	pip install -e .
 
 test: develop
-	py.test -v
+	py.test
 
 test-all:
 	tox -v
 
 coverage: develop
-	coverage run -m pytest
+	coverage run -m py.test
 	coverage combine
 	coverage report
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-compile-reqs:
-	pip-compile -v requirements.in -o requirements.txt
-	pip-compile -v dev-requirements.in -o dev-requirements.txt
-
-install-reqs:
-	pip install -r requirements.txt
-	pip install -r dev-requirements.txt
-
-docs:
+docs-build: develop
 	rm -f docs/inline_requests.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ src/inline_requests
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs $(SPHINX_BUILD)
+
+docs: docs-build
 	$(BROWSER) docs/_build/$(SPHINX_BUILD)/index.html
 
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: dist
+release: clean check dist
+	git branch | grep '* master'
+	# Tagging release.
+	VERSION=`cat VERSION`; git tag -a v$$VERSION
+	git push --follow-tags
 	twine upload dist/*
 
 dist: clean
@@ -123,4 +128,22 @@ dist: clean
 	ls -l dist
 
 install: clean
-	python setup.py install
+	pip install .
+
+REQUIREMENTS_IN := $(wildcard requirements*.in)
+.PHONY: $(REQUIREMENTS_IN)
+
+requirements%.txt: requirements%.in
+	pip-compile -v $< -o $@
+
+REQUIREMENTS_TXT := $(REQUIREMENTS_IN:.in=.txt)
+ifndef REQUIREMENTS_TXT
+REQUIREMENTS_TXT := $(wildcard requirements*.txt)
+endif
+
+compile-reqs: $(REQUIREMENTS_TXT)
+	@test -z "$$REQUIREMENTS_TXT" && echo "No 'requirements*.in' files. Nothing to do"
+
+install-reqs:
+	@test -z "$$REQUIREMENTS_TXT" && echo "No 'requirements*.txt' files. Nothing to do"
+	$(foreach req,$(REQUIREMENTS_TXT),pip install -r $(req);)

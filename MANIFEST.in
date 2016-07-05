@@ -9,8 +9,8 @@ include *.rst
 include *.txt
 
 include LICENSE
+include VERSION
 include Makefile
-include conftest.py
 
 global-exclude __pycache__ *.py[cod]
 global-exclude *.so *.dylib

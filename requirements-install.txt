@@ -1,0 +1,3 @@
+# This packages are required to install and run our package.
+Scrapy>=1.0
+six>=1.5

@@ -5,20 +5,33 @@ Scrapy Inline Requests
 .. image:: https://img.shields.io/pypi/v/scrapy-inline-requests.svg
         :target: https://pypi.python.org/pypi/scrapy-inline-requests
 
-.. image:: https://img.shields.io/travis/rolando/scrapy-inline-requests.svg
-        :target: https://travis-ci.org/rolando/scrapy-inline-requests
+.. image:: https://img.shields.io/pypi/pyversions/scrapy-inline-requests.svg
+        :target: https://pypi.python.org/pypi/scrapy-inline-requests
 
 .. image:: https://readthedocs.org/projects/scrapy-inline-requests/badge/?version=latest
         :target: https://readthedocs.org/projects/scrapy-inline-requests/?badge=latest
         :alt: Documentation Status
 
+.. image:: https://img.shields.io/travis/rolando/scrapy-inline-requests.svg
+        :target: https://travis-ci.org/rolando/scrapy-inline-requests
+
+.. image:: https://codecov.io/github/rolando/scrapy-inline-requests/coverage.svg?branch=master
+    :alt: Coverage Status
+    :target: https://codecov.io/github/rolando/scrapy-inline-requests
+
+.. image:: https://landscape.io/github/rolando/scrapy-inline-requests/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/rolando/scrapy-inline-requests/master
+    :alt: Code Quality Status
+
+.. image:: https://requires.io/github/rolando/scrapy-inline-requests/requirements.svg?branch=master
+    :alt: Requirements Status
+    :target: https://requires.io/github/rolando/scrapy-inline-requests/requirements/?branch=master
 
 A decorator for writing coroutine-like spider callbacks.
 
-Requires ``Scrapy>=1.0`` and supports Python 2.7+ and 3.4+.
-
 * Free software: MIT license
 * Documentation: https://scrapy-inline-requests.readthedocs.org.
+* Python versions: 2.7, 3.4+
 
 Quickstart
 ----------

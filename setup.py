@@ -1,40 +1,46 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import io
 from pkgutil import walk_packages
 from setuptools import setup
 
 
 def find_packages(path):
     # This method returns packages and subpackages as well.
-    for _, name, is_pkg in walk_packages([path]):
-        if is_pkg:
-            yield name
+    return [name for _, name, is_pkg in walk_packages([path]) if is_pkg]
 
 
 def read_file(filename):
-    with open(filename) as fp:
-        return fp.read()
+    with io.open(filename) as fp:
+        return fp.read().strip()
 
 
-requirements = [
-    'six>=1.5',
-    'scrapy>=1.0',
-]
+def read_rst(filename):
+    # Ignore unsupported directives by pypi.
+    content = read_file(filename)
+    return ''.join(line for line in io.StringIO(content)
+                   if not line.startswith('.. comment::'))
+
+
+def read_requirements(filename):
+    return [line.strip() for line in read_file(filename).splitlines()
+            if not line.startswith('#')]
+
 
 setup(
     name='scrapy-inline-requests',
-    version='0.3.1dev',
+    version=read_file('VERSION'),
     description="A decorator for writing coroutine-like spider callbacks.",
-    long_description=read_file('README.rst') + '\n\n' + read_file('HISTORY.rst'),
+    long_description=read_rst('README.rst') + '\n\n' + read_rst('HISTORY.rst'),
     author="Rolando Espinoza",
     author_email='rolando at rmax.io',
     url='https://github.com/rolando/scrapy-inline-requests',
     packages=list(find_packages('src')),
     package_dir={'': 'src'},
+    setup_requires=read_requirements('requirements-setup.txt'),
+    install_requires=read_requirements('requirements-install.txt'),
     include_package_data=True,
-    install_requires=requirements,
     license="MIT",
-    zip_safe=True,
     keywords='scrapy-inline-requests',
     classifiers=[
         'Development Status :: 4 - Beta',

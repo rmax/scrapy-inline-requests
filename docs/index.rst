@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to Scrapy Inline Requests's documentation!
-======================================
+==================================================
 
 Contents:
 
@@ -15,3 +15,11 @@ Contents:
    installation
    reference
    history
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

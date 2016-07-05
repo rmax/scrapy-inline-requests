@@ -1,0 +1,5 @@
+# This packages are required to run all the tests.
+coverage
+flake8
+pytest
+tox
