@@ -78,7 +78,7 @@ class RequestGenerator(object):
         if request.callback is not None:
             raise ValueError("Request with existing callback is not supported")
         if request.errback is not None:
-            raise ValueError("Request with existing callback is not supported")
+            raise ValueError("Request with existing errback is not supported")
         request.callback = partial(self._handleSuccess, generator=generator)
         request.errback = partial(self._handleFailure, generator=generator)
         return request
