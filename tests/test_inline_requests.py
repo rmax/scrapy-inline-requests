@@ -18,7 +18,7 @@ def test_inline_requests():
     ]
 
 
-def test_inline_request_callback_not_allowed():
+def test_inline_request_callback_is_none():
     class MySpider(object):
         @inline_requests
         def parse(self, response):
@@ -27,7 +27,8 @@ def test_inline_request_callback_not_allowed():
             assert resp.request.errback is None
 
     spider = MySpider()
-    _consume(spider.parse(Response('http://example.com')))
+    out = [req.url for req in _consume(spider.parse, Response('http://example.com'))]
+    assert out == ['http://example/1']
 
 
 def _consume(callback, *args):
