@@ -54,15 +54,17 @@ class RequestGenerator(object):
 
             if isinstance(ret, Request):
                 if ret.callback:
-                    warnings.warn("Got a request with callback set, bypassing "
-                                  "the generator wrapper. Generator may not "
-                                  "be able to resume. %s" % ret)
+                    if not ret.meta.get('inline_requests_no_warning'):
+                        warnings.warn("Got a request with callback set, bypassing "
+                                      "the generator wrapper. Generator may not "
+                                      "be able to resume. %s" % ret)
                 elif ret.errback:
                     # By Scrapy defaults, a request without callback defaults to
                     # self.parse spider method.
-                    warnings.warn("Got a request with errback set, bypassing "
-                                  "the generator wrapper. Generator may not "
-                                  "be able to resume. %s" % ret)
+                    if not ret.meta.get('inline_requests_no_warning'):
+                        warnings.warn("Got a request with errback set, bypassing "
+                                      "the generator wrapper. Generator may not "
+                                      "be able to resume. %s" % ret)
                 else:
                     yield self._wrapRequest(ret, generator)
                     return
